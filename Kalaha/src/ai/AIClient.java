@@ -215,10 +215,15 @@ public class AIClient implements Runnable
         Problem problem = new Problem(currentBoard);
         Search search = new Search();
         
-        MoveIndicator move = search.DeepeningSearch(problem, 2);
-        
-        
+        MoveIndicator move = search.DeepeningSearch(problem, 3);
+        //int dummy = 0;
         int myMove = getRandom();
+
+        if(move.getValue() > 0){
+            myMove = move.getValue();
+            addText("Made special move " + myMove);
+        }
+        
         return myMove;
     }
     
