@@ -15,6 +15,11 @@ public class Problem {
     private GameState initialState;
     private GameState currentState;
     
+    public Problem(GameState _initialState){
+        this.initialState = _initialState.clone();
+        this.currentState = _initialState.clone();
+    }
+    
     public boolean goalTest(MoveIndicator _move){
         if(_move.getValue() > 0 && currentState.moveIsPossible(_move.getValue())){
             currentState.makeMove(_move.getValue());
