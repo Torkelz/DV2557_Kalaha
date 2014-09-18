@@ -5,6 +5,7 @@
  */
 package ai;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class Node{
     public Node(Node _parent, MoveIndicator _move){
         this.move = _move;
         this.parent = _parent;
+        children = new ArrayList<>();
     }
     
     public void addChild(MoveIndicator _move){
@@ -48,7 +50,7 @@ public class Node{
     
     void populate(Problem _problem){
         for(MoveIndicator ind : MoveIndicator.values()){
-            if(_problem.isValidMove(ind))
+            if(ind.getValue() > 0 && _problem.isValidMove(ind))
                 children.add(new Node(this, ind));
         }
     }

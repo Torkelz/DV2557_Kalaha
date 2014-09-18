@@ -12,8 +12,7 @@ import java.util.Iterator;
  * @author Torkelz / Smurfa
  */
 public class Search {    
-    
-    MoveIndicator DeepeningSearch(Problem _problem, int _depth){        
+    public MoveIndicator DeepeningSearch(Problem _problem, int _depth){        
         for(int i = 0; i < _depth; ++i){
             MoveIndicator move = depthLimitedSearch(_problem, _depth);
             if(move != MoveIndicator.CUTOFF){
@@ -23,11 +22,13 @@ public class Search {
         return MoveIndicator.FAILURE;
     }
     
-    MoveIndicator depthLimitedSearch(Problem _problem, int _maxDepth){
-        return recursiveDLS(null, _problem, _maxDepth);
+    private MoveIndicator depthLimitedSearch(Problem _problem, int _maxDepth){
+        Node root = new Node(null, MoveIndicator.FAILURE);
+        //root.populate(_problem);
+        return recursiveDLS(root, _problem, _maxDepth);
     }
     
-    MoveIndicator recursiveDLS(Node _currentNode, Problem _problem, int _maxDepth){
+    private MoveIndicator recursiveDLS(Node _currentNode, Problem _problem, int _maxDepth){
         
         if(_problem.goalTest(_currentNode.getMove())){
             return _currentNode.getMove();
@@ -37,11 +38,12 @@ public class Search {
         }
         else{
             _currentNode.populate(_problem);
+            
             boolean cutoffOccured = false;
             Iterator<Node> it = _currentNode.getChildIterator();
             
             while(it.hasNext()){
-                MoveIndicator result = recursiveDLS((Node) it, _problem, _maxDepth - 1);
+                MoveIndicator result = recursiveDLS((Node) it.next(), _problem, _maxDepth - 1);
                 if(result == MoveIndicator.CUTOFF){
                     cutoffOccured = true;
                 }
