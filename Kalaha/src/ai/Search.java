@@ -12,7 +12,10 @@ import java.util.Iterator;
  * @author Torkelz / Smurfa
  */
 public class Search {    
-    public MoveIndicator DeepeningSearch(Problem _problem, int _depth){        
+    public MoveIndicator DeepeningSearch(Problem _problem, int _depth){
+        
+        _problem.resetState();
+        
         for(int i = 0; i < _depth; ++i){
             MoveIndicator move = depthLimitedSearch(_problem, _depth);
             if(move != MoveIndicator.CUTOFF){
@@ -29,7 +32,7 @@ public class Search {
     }
     
     private MoveIndicator recursiveDLS(Node _currentNode, Problem _problem, int _maxDepth){
-        
+        //Save temporary state here ?!
         if(_problem.goalTest(_currentNode.getMove())){
             return _currentNode.getMove();
         }
@@ -37,7 +40,8 @@ public class Search {
             return MoveIndicator.CUTOFF;
         }
         else{
-            _currentNode.populate(_problem);
+            if(_currentNode.getChildCount() == 0)
+                _currentNode.populate(_problem);
             
             boolean cutoffOccured = false;
             Iterator<Node> it = _currentNode.getChildIterator();

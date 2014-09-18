@@ -31,4 +31,8 @@ public class Problem {
     public boolean isValidMove(MoveIndicator _move){
         return currentState.moveIsPossible(_move.getValue());
     }
+    
+    public void resetState(){
+        currentState = initialState.clone();
+    }
 }
