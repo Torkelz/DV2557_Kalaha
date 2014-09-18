@@ -212,6 +212,12 @@ public class AIClient implements Runnable
      */
     public int getMove(GameState currentBoard)
     {
+        Problem problem = new Problem(currentBoard);
+        Search search = new Search();
+        
+        MoveIndicator move = search.DeepeningSearch(problem, 2);
+        
+        
         int myMove = getRandom();
         return myMove;
     }
