@@ -14,7 +14,6 @@ import kalaha.GameState;
 public class Problem {
     private GameState initState;    
     private GameState currentState;
-
     private int player;
     private int otherPlayer;
     
@@ -43,9 +42,11 @@ public class Problem {
     public boolean isValidMove(MoveIndicator _move){
         return currentState.moveIsPossible(_move.getValue());
     }
+    
     public boolean isMax(){
         return player == currentState.getNextPlayer();
     }
+    
     public GameState cloneGSProblem(){
         return currentState.clone();
     }
@@ -66,8 +67,6 @@ public class Problem {
         else{
             
         }
-        
-        
 
         return value;
     }
