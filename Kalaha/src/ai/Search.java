@@ -7,12 +7,15 @@ package ai;
 
 import java.util.Iterator;
 import kalaha.GameState;
-
 /**
  *
  * @author Torkelz / Smurfa
  */
 public class Search {
+    /*
+     * Maximum allowed time the AI is allowede to search for moves in each turn.
+     */
+    static final long MAX_TIME = 5000;
     
     private class AlphaBetaMove{
         public MoveIndicator move;
@@ -24,36 +27,45 @@ public class Search {
         }
     }
     
-    
-    
-    
-    public MoveIndicator DeepeningSearch(Problem _problem, int _depth){
+    public MoveIndicator deepeningSearch(Problem _problem, int _depth){
+        long startTime = System.currentTimeMillis();
+        long elapsedTime = 0;
+        long iterationTime = 0;
+        MoveIndicator move = MoveIndicator.FAILURE;
         
-        //_problem.resetState();
-        
-        for(int i = 0; i < _depth; ++i){
-            MoveIndicator move = depthLimitedSearch(_problem, _depth);
+        for(int i = 1; elapsedTime + iterationTime < MAX_TIME; ++i){
+            long start = System.currentTimeMillis();
+            MoveIndicator bestMove = depthLimitedSearch(_problem, i, startTime);
             _problem.resetState();
-            if(move != MoveIndicator.CUTOFF){
-                return move;
+            
+            if(bestMove != MoveIndicator.CUTOFF){
+                move = bestMove;
             }
+            
+            long end = System.currentTimeMillis() - start;
+            iterationTime = end;
+            elapsedTime += end;
         }
-        return MoveIndicator.FAILURE;
+        return move;
     }
     
-    private MoveIndicator depthLimitedSearch(Problem _problem, int _maxDepth){
+    private MoveIndicator depthLimitedSearch(Problem _problem, int _maxDepth, long _startTime){
         Node root = new Node(null, MoveIndicator.FAILURE);
-        //root.populate(_problem);
-        return recursiveDLS(root, _problem, Integer.MIN_VALUE, Integer.MAX_VALUE, _maxDepth).move;
+
+        return recursiveDLS(root, _problem, Integer.MIN_VALUE, Integer.MAX_VALUE, _maxDepth, _startTime).move;
     }
     
-    private AlphaBetaMove recursiveDLS(Node _currentNode, Problem _problem, int _alpha, int _beta, int _maxDepth){
-        //Save temporary state here ?!
+    private AlphaBetaMove recursiveDLS(Node _currentNode, Problem _problem, int _alpha,
+            int _beta, int _maxDepth, long _startTime){
         GameState prevState = _problem.cloneGSProblem();
         GameState nodeState = _problem.cloneGSProblem();
         if(_currentNode.getMove().getValue() > 0)
             nodeState.makeMove(_currentNode.getMove().getValue());
-
+        
+        if((System.currentTimeMillis() - _startTime) >= MAX_TIME){
+            return new AlphaBetaMove(MoveIndicator.CUTOFF, _problem.evaluate(prevState, nodeState));
+        }
+        
         if(_maxDepth == 0 || nodeState.getWinner() > 0){
             return new AlphaBetaMove(_currentNode.getMove(), _problem.evaluate(prevState, nodeState));
         }
@@ -68,7 +80,7 @@ public class Search {
         if(_problem.isMax()){
             AlphaBetaMove result = new AlphaBetaMove(MoveIndicator.FAILURE, _alpha);
             while(it.hasNext()){                
-                result = recursiveDLS((Node) it.next(), new Problem(nodeState, _problem.getmaxPlayer()), _alpha, _beta, _maxDepth - 1);
+                result = recursiveDLS((Node) it.next(), new Problem(nodeState, _problem.getmaxPlayer()), _alpha, _beta, _maxDepth - 1, _startTime);
                 _alpha = Math.max(_alpha, result.alphabeta);
                 
                 if(_beta <= _alpha){
@@ -85,7 +97,7 @@ public class Search {
         else{
             AlphaBetaMove result = new AlphaBetaMove(MoveIndicator.FAILURE, _beta);
             while(it.hasNext()){                
-                result = recursiveDLS((Node) it.next(), new Problem(nodeState, _problem.getmaxPlayer()), _alpha, _beta, _maxDepth - 1);
+                result = recursiveDLS((Node) it.next(), new Problem(nodeState, _problem.getmaxPlayer()), _alpha, _beta, _maxDepth - 1, _startTime);
                 _beta = Math.min(_beta, result.alphabeta);
                 
                 if(_beta <= _alpha){
