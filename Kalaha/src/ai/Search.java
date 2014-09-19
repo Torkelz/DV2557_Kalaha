@@ -11,7 +11,23 @@ import java.util.Iterator;
  *
  * @author Torkelz / Smurfa
  */
-public class Search {    
+public class Search {
+    
+    private class AlphaBetaMove{
+        public MoveIndicator move;
+        public int alpha;
+        public int beta;
+
+        public AlphaBetaMove(MoveIndicator _move, int _alpha, int _beta) {
+            this.move = _move;
+            this.alpha = _alpha;
+            this.beta = _beta;
+        }
+    }
+    
+    
+    
+    
     public MoveIndicator DeepeningSearch(Problem _problem, int _depth){
         
         _problem.resetState();
@@ -28,16 +44,16 @@ public class Search {
     private MoveIndicator depthLimitedSearch(Problem _problem, int _maxDepth){
         Node root = new Node(null, MoveIndicator.FAILURE);
         //root.populate(_problem);
-        return recursiveDLS(root, _problem, _maxDepth);
+        return recursiveDLS(root, _problem, _maxDepth).move;
     }
     
-    private MoveIndicator recursiveDLS(Node _currentNode, Problem _problem, int _maxDepth){
+    private AlphaBetaMove recursiveDLS(Node _currentNode, Problem _problem, int _maxDepth){
         //Save temporary state here ?!
         if(_problem.goalTest(_currentNode.getMove())){
-            return _currentNode.getMove();
+            return new AlphaBetaMove(_currentNode.getMove(),0,0);
         }
         else if(_maxDepth == 0){
-            return MoveIndicator.CUTOFF;
+            return new AlphaBetaMove(MoveIndicator.CUTOFF,0,0);
         }
         else{
             if(_currentNode.getChildCount() == 0)
@@ -46,16 +62,28 @@ public class Search {
             boolean cutoffOccured = false;
             Iterator<Node> it = _currentNode.getChildIterator();
             
-            while(it.hasNext()){
-                MoveIndicator result = recursiveDLS((Node) it.next(), _problem, _maxDepth - 1);
-                if(result == MoveIndicator.CUTOFF){
-                    cutoffOccured = true;
-                }
-                else if(result != MoveIndicator.FAILURE){
-                    return result;
+            if(_problem.isMax()){
+                while(it.hasNext()){                
+                    AlphaBetaMove result = recursiveDLS((Node) it.next(), _problem, _maxDepth - 1);
+                    if(result == MoveIndicator.CUTOFF){
+                        cutoffOccured = true;
+                    }
+                    else if(result != MoveIndicator.FAILURE){
+                        return result;
+                    }
                 }
             }
-            
+            else{
+                while(it.hasNext()){                
+                    AlphaBetaMove result = recursiveDLS((Node) it.next(), _problem, _maxDepth - 1);
+                    if(result == MoveIndicator.CUTOFF){
+                        cutoffOccured = true;
+                    }
+                    else if(result != MoveIndicator.FAILURE){
+                        return result;
+                    }
+                }
+            }
             if(cutoffOccured){
                 return MoveIndicator.CUTOFF;
             }

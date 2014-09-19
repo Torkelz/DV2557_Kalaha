@@ -1,6 +1,5 @@
 package ai;
 
-import ai.Global;
 import java.io.*;
 import java.net.*;
 import javax.swing.*;
@@ -212,17 +211,17 @@ public class AIClient implements Runnable
      */
     public int getMove(GameState currentBoard)
     {
-        Problem problem = new Problem(currentBoard);
+        Problem problem = new Problem(currentBoard, player);
         Search search = new Search();
         
         MoveIndicator move = search.DeepeningSearch(problem, 3);
-        //int dummy = 0;
         int myMove = getRandom();
 
         if(move.getValue() > 0){
             myMove = move.getValue();
             addText("Made special move " + myMove);
-        }
+        }       
+        
         
         return myMove;
     }

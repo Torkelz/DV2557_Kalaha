@@ -12,7 +12,7 @@ package ai;
 public enum MoveIndicator {
     ONE(1),
     TWO(2),
-    TREE(3),
+    THREE(3),
     FOUR(4),
     FIVE(5),
     SIX(6),

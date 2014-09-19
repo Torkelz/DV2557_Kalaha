@@ -14,10 +14,12 @@ import kalaha.GameState;
 public class Problem {
     private GameState initialState;
     private GameState currentState;
+    private int player;
     
-    public Problem(GameState _initialState){
+    public Problem(GameState _initialState, int _player){
         this.initialState = _initialState.clone();
         this.currentState = _initialState.clone();
+        this.player = _player;
     }
     
     public boolean goalTest(MoveIndicator _move){
@@ -34,5 +36,8 @@ public class Problem {
     
     public void resetState(){
         currentState = initialState.clone();
+    }
+    public boolean isMax(){
+        return player == currentState.getNextPlayer();
     }
 }
