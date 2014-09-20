@@ -13,7 +13,11 @@ import java.util.List;
  *
  * @author Torkelz / Smurfa
  */
-public class Node{
+public class Node extends Object{
+    static final Visualization vz = new Visualization();
+    
+    
+    
      private final MoveIndicator move;
      private Node parent;
      private List<Node> children;
@@ -53,6 +57,17 @@ public class Node{
             if(ind.getValue() > 0 && _problem.isValidMove(ind))
                 children.add(new Node(this, ind));
         }
+        Iterator<Node> it = getChildIterator();
+        while(it.hasNext()){
+            vz.add(this, it.next());
+        }
+        vz.updateTree();
     }
+    
+    @Override
+    public String toString(){
+        return Integer.toString(move.getValue());
+    }
+    
 }
 

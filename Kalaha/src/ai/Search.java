@@ -51,7 +51,8 @@ public class Search {
     
     private MoveIndicator depthLimitedSearch(Problem _problem, int _maxDepth, long _startTime){
         Node root = new Node(null, MoveIndicator.FAILURE);
-
+        Node.vz.setRoot(root);
+        
         return recursiveDLS(root, _problem, Integer.MIN_VALUE, Integer.MAX_VALUE, _maxDepth, _startTime).move;
     }
     
