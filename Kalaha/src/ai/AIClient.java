@@ -23,12 +23,17 @@ public class AIClient implements Runnable
     private Socket socket;
     private boolean running;
     private boolean connected;
+    
+    private static final ViewGraph VG = new ViewGraph();
+    
     	
     /**
      * Creates a new client.
      */
     public AIClient()
     {
+        VG.setVisible(true);
+        
 	player = -1;
         connected = false;
         
