@@ -5,6 +5,7 @@
  */
 package ai;
 
+import static ai.TreeViewer.treeView;
 import java.util.Iterator;
 import kalaha.GameState;
 /**
@@ -51,7 +52,11 @@ public class Search {
     
     private MoveIndicator depthLimitedSearch(Problem _problem, int _maxDepth, long _startTime){
         Node root = new Node(null, MoveIndicator.FAILURE);
-
+        /*
+        Clear Tree and reset the root.
+        */
+        treeView.clearTree();
+        root.setTreeNode(treeView.getRoot());
         return recursiveDLS(root, _problem, Integer.MIN_VALUE, Integer.MAX_VALUE, _maxDepth, _startTime).move;
     }
     
@@ -61,6 +66,10 @@ public class Search {
         GameState nodeState = _problem.cloneGSProblem();
         if(_currentNode.getMove().getValue() > 0)
             nodeState.makeMove(_currentNode.getMove().getValue());
+        /*
+            Expands the current node.
+        */
+        treeView.expandCurrentNode(_currentNode.getTreeNode());
         
         if((System.currentTimeMillis() - _startTime) >= MAX_TIME){
             return new AlphaBetaMove(MoveIndicator.CUTOFF, _problem.evaluate(prevState, nodeState));

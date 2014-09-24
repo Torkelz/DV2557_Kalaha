@@ -29,6 +29,15 @@ public class AIClient implements Runnable
      */
     public AIClient()
     {
+        /*
+         Create and show Tree GUI
+        */
+        
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                TreeViewer.createAndShowGUI();
+            }
+        });
 	player = -1;
         connected = false;
         

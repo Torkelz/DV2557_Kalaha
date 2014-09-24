@@ -8,6 +8,8 @@ package ai;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
 
 /**
  *
@@ -17,11 +19,14 @@ public class Node{
      private final MoveIndicator move;
      private Node parent;
      private List<Node> children;
+     
+     DefaultMutableTreeNode treeNode; // Needed for Treeviewer
 
     public Node(Node _parent, MoveIndicator _move){
         this.move = _move;
         this.parent = _parent;
         children = new ArrayList<>();
+        treeNode = new DefaultMutableTreeNode(this);
     }
     
     public void addChild(MoveIndicator _move){
@@ -50,9 +55,24 @@ public class Node{
     
     void populate(Problem _problem){
         for(MoveIndicator ind : MoveIndicator.values()){
-            if(ind.getValue() > 0 && _problem.isValidMove(ind))
+            if(ind.getValue() > 0 && _problem.isValidMove(ind)){
                 children.add(new Node(this, ind));
+                TreeViewer.treeView.insertChild(treeNode, children.get(children.size() - 1).getTreeNode());
+            }
         }
+    }
+    /*
+     Tree viewer needed functions
+    */
+    public DefaultMutableTreeNode getTreeNode(){
+        return treeNode;
+    }
+    public void setTreeNode(DefaultMutableTreeNode _node){
+        treeNode = _node;
+    }
+    
+    public String toString(){
+        return Integer.toString(move.getValue());
     }
 }
 
