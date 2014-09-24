@@ -1,5 +1,6 @@
 package ai;
 
+import static ai.TreeViewer.treeView;
 import java.io.*;
 import java.net.*;
 import javax.swing.*;
@@ -35,7 +36,7 @@ public class AIClient implements Runnable
         
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                TreeViewer.createAndShowGUI();
+                treeView.createAndShowGUI();
             }
         });
 	player = -1;
