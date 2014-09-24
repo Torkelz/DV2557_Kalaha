@@ -31,13 +31,12 @@ public class TreeViewer  extends JPanel{
     private JTree tree;
     private DefaultMutableTreeNode top;
     private DefaultTreeModel tmodel;
-    
-    private static boolean DEBUG = false;
+    private DefaultMutableTreeNode previousNode;
+
     //Optionally play with line styles.  Possible values are
     //"Angled" (the default), "Horizontal", and "None".
     private static boolean playWithLineStyle = false;
     private static String lineStyle = "Horizontal";
-    private DefaultMutableTreeNode previousNode;
     
     //Optionally set the look and feel.
     private static boolean useSystemLookAndFeel = false;
@@ -45,7 +44,7 @@ public class TreeViewer  extends JPanel{
     public TreeViewer(){
         super(new GridLayout(1,0));
         
-        top = new DefaultMutableTreeNode("The Java Series");
+        top = new DefaultMutableTreeNode("ROOT");
         //createNodes(top);
         previousNode = top;
         //Create a tree that allows one selection at a time.
@@ -114,15 +113,16 @@ public class TreeViewer  extends JPanel{
     public void createAndShowGUI() {
         if (useSystemLookAndFeel) {
             try {
-                UIManager.setLookAndFeel(
-                    UIManager.getSystemLookAndFeelClassName());
+//                UIManager.setLookAndFeel(
+//                    UIManager.getSystemLookAndFeelClassName());
+                UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsClassicLookAndFeel");
             } catch (Exception e) {
                 System.err.println("Couldn't use system look and feel.");
             }
         }
 
         //Create and set up the window.
-        JFrame frame = new JFrame("TreeDemo");
+        JFrame frame = new JFrame("TreeViewer");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setPreferredSize(new Dimension(400,320));
         //Add content to the window.
@@ -136,9 +136,7 @@ public class TreeViewer  extends JPanel{
         menuBar = new JMenuBar();
         
         //Build the first menu.
-        menu = new JMenu("A Menu");
-        menu.getAccessibleContext().setAccessibleDescription(
-                "The only menu in this program that has menu items");
+        menu = new JMenu("Menu");
         menuBar.add(menu);
 
         //a group of JMenuItems
