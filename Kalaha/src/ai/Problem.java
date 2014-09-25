@@ -73,26 +73,13 @@ public class Problem {
     public int evaluate(GameState _prev, GameState _current){
         int utility = 0;
 
-        /// Evaluate score utility of scoring
+        /// Evaluate utility based on scoring
         if(_prev.getNextPlayer() == player){
-            int score = _current.getScore(player) - _prev.getScore(player);
-            if(score > 1)
-                utility += score;
-            else if(_current.getNextPlayer() == _prev.getNextPlayer())
-                utility +=5;
-            else
-                utility += 2;
+            utility += evaluateUtilityByScore(_prev, _current, player);
         }
         else{
-            int score = _current.getScore(otherPlayer) - _prev.getScore(otherPlayer);
-            if(score > 1)
-                utility -= score;
-            else if(_current.getNextPlayer() == _prev.getNextPlayer())
-                utility -=5;
-            else
-                utility -= 1;
+            utility -= evaluateUtilityByScore(_prev, _current, otherPlayer);
         }
-        
         
         /// Evaluate win/lose conditions
         if(_current.getWinner() == player) //AI Win
@@ -101,10 +88,21 @@ public class Problem {
             utility +=10;
         else if(_current.getWinner() == otherPlayer) //AI Lose
             utility -= 50;
-        else{
-            
-        }
-
+    
         return utility;
+    }
+    
+    private int evaluateUtilityByScore(GameState _prev, GameState _current, int _player){
+        int utility = 0;
+        
+        int score = _current.getScore(_player) - _prev.getScore(_player);
+        if(score > 1)
+            utility += score;
+        else if(_current.getNextPlayer() == _prev.getNextPlayer())
+            utility +=5;
+        else
+            utility += 2;
+              
+        return utility; 
     }
 }
