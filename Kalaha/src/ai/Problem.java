@@ -73,6 +73,27 @@ public class Problem {
     public int evaluate(GameState _prev, GameState _current){
         int value = 0;
         
+        /*int seeds = 0;
+        for(int player = 1; player <= 2; ++player){
+            for(int ambo = 1; ambo <=6; ++ambo){
+                if(seeds <)
+            }
+        }*/
+        
+        if(_prev.getNextPlayer() == player){
+            int score = _current.getScore(player) - _prev.getScore(player);
+            if(score > 1)
+                value += score;
+        }
+        else{
+            int score = _current.getScore(otherPlayer) - _prev.getScore(otherPlayer);
+            if(score > 1)
+                value -= score;
+        }
+        
+        
+        
+        
         if(_current.getWinner() == player) //AI Win
             value += 50;
         else if(_current.getWinner() == 0) //Draw
