@@ -85,7 +85,7 @@ public class Problem {
         if(_current.getWinner() == player) //AI Win
             utility += 50;
         else if(_current.getWinner() == 0) //Draw
-            utility +=10;
+            utility +=2;
         else if(_current.getWinner() == otherPlayer) //AI Lose
             utility -= 50;
     
@@ -97,11 +97,25 @@ public class Problem {
         
         int score = _current.getScore(_player) - _prev.getScore(_player);
         if(score > 1)
-            utility += score;
+            utility += score * 2;
         else if(_current.getNextPlayer() == _prev.getNextPlayer())
-            utility +=5;
+            utility += 10;
         else
             utility += 2;
+        
+        int opponent = 1;
+        if(_player == opponent)
+            opponent = 2;
+        
+        int pSeeds = 0;
+        int oSeeds = 0;
+        for(int i = 1; i <= 6; ++i){
+            pSeeds += _current.getSeeds(i, _player);
+            oSeeds += _current.getSeeds(i, opponent);
+        }
+        
+        if(pSeeds > oSeeds)
+            utility += 5;
               
         return utility; 
     }
