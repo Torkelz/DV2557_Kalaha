@@ -17,6 +17,17 @@ public class Problem {
     private int player;
     private int otherPlayer;
     
+    public GameState getCurrentGS(){
+        return currentState;
+    }
+    public GameState getInitialGS(){
+        return initState;
+    }
+    
+    public int getmaxPlayer(){
+        return player;
+    }
+    
     public Problem(GameState _initialState, int _player){
         this.currentState = _initialState.clone();
         this.initState = _initialState.clone();
@@ -25,6 +36,10 @@ public class Problem {
         if(this.player == 1)
             this.otherPlayer = 2;
 
+    }
+    
+    public Problem clone(){
+        return new Problem(initState, player);
     }
     
     public void resetState(){
@@ -69,9 +84,5 @@ public class Problem {
         }
 
         return value;
-    }
-    
-    public int getmaxPlayer(){
-        return player;
     }
 }

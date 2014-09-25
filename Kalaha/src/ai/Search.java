@@ -36,8 +36,8 @@ public class Search {
         
         for(int i = 1; elapsedTime + iterationTime < MAX_TIME; ++i){
             long start = System.currentTimeMillis();
-            MoveIndicator bestMove = depthLimitedSearch(_problem, i, startTime);
-            _problem.resetState();
+            MoveIndicator bestMove = depthLimitedSearch(_problem.clone(), i, startTime);
+            //_problem.resetState();
             
             if(bestMove != MoveIndicator.CUTOFF){
                 move = bestMove;
@@ -62,8 +62,7 @@ public class Search {
     
     private AlphaBetaMove recursiveDLS(Node _currentNode, Problem _problem, int _alpha,
             int _beta, int _maxDepth, long _startTime){
-        GameState prevState = _problem.cloneGSProblem();
-        GameState nodeState = _problem.cloneGSProblem();
+        GameState nodeState = _problem.getInitialGS();
         if(_currentNode.getMove().getValue() > 0)
             nodeState.makeMove(_currentNode.getMove().getValue());
         /*
@@ -72,14 +71,14 @@ public class Search {
         treeView.expandCurrentNode(_currentNode.getTreeNode());
         
         if((System.currentTimeMillis() - _startTime) >= MAX_TIME){
-            return new AlphaBetaMove(MoveIndicator.CUTOFF, _problem.evaluate(prevState, nodeState));
+            return new AlphaBetaMove(MoveIndicator.CUTOFF, _problem.evaluate(_problem.getCurrentGS(), nodeState));
         }
         
         if(_maxDepth == 0 || nodeState.getWinner() > 0){
-            return new AlphaBetaMove(_currentNode.getMove(), _problem.evaluate(prevState, nodeState));
+            return new AlphaBetaMove(_currentNode.getMove(), _problem.evaluate(_problem.getCurrentGS(), nodeState));
         }
         
-        _problem.updateCurrentGS(nodeState);
+        //_problem.updateCurrentGS(nodeState);
         
         if(_currentNode.getChildCount() == 0){
             _currentNode.populate(_problem);
