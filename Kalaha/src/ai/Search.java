@@ -7,6 +7,7 @@ package ai;
 
 import static ai.TreeViewer.treeView;
 import java.util.Iterator;
+import javax.swing.JTextArea;
 import kalaha.GameState;
 /**
  *
@@ -17,6 +18,18 @@ public class Search {
      * Maximum allowed time the AI is allowede to search for moves in each turn.
      */
     static final long MAX_TIME = 5000;
+    private JTextArea text;
+    
+    public Search(JTextArea _text){
+        text = _text;
+    }
+    
+    public void addText(String txt)
+    {
+        //Don't change this
+        text.append(txt + "\n");
+        text.setCaretPosition(text.getDocument().getLength());
+    }
     
     public class AlphaBetaMove{
         public MoveIndicator move;
@@ -33,12 +46,11 @@ public class Search {
         long elapsedTime = 0;
         long iterationTime = 0;
         AlphaBetaMove m = new AlphaBetaMove(MoveIndicator.FAILURE, -1);
-                
-        for(int i = 1; elapsedTime + iterationTime < MAX_TIME; ++i){
+        int i;
+        for(i = 1; elapsedTime + iterationTime < MAX_TIME; ++i){
             long start = System.currentTimeMillis();
             AlphaBetaMove bestMove = depthLimitedSearch(_problem.clone(), i, startTime);
             //_problem.resetState();
-            
             if(bestMove.move != MoveIndicator.CUTOFF){
                 m = bestMove;
             }
@@ -47,6 +59,8 @@ public class Search {
             iterationTime = end;
             elapsedTime += end;
         }
+        addText("Depth: " + i);
+
         return m;
     }
     
@@ -55,8 +69,10 @@ public class Search {
         /*
         Clear Tree and reset the root.
         */
-        treeView.clearTree();
-        root.setTreeNode(treeView.getRoot());
+        if(treeView != null){
+            treeView.clearTree();
+            root.setTreeNode(treeView.getRoot());
+        }
         return recursiveDLS(root, _problem, Integer.MIN_VALUE, Integer.MAX_VALUE, _maxDepth, _startTime);
     }
     
@@ -68,7 +84,9 @@ public class Search {
         /*
             Expands the current node.
         */
-        treeView.expandCurrentNode(_currentNode.getTreeNode());
+        if(treeView != null){
+            treeView.expandCurrentNode(_currentNode.getTreeNode());
+        }
         
         if((System.currentTimeMillis() - _startTime) >= MAX_TIME){
             return new AlphaBetaMove(MoveIndicator.CUTOFF, _problem.evaluate(_problem.getCurrentGS(), nodeState));
@@ -91,6 +109,9 @@ public class Search {
                 result = recursiveDLS((Node) it.next(), new Problem(nodeState, _problem.getmaxPlayer()), _alpha, _beta, _maxDepth - 1, _startTime);
                 _alpha = Math.max(_alpha, result.alphabeta);
                 
+                if(result.move == MoveIndicator.CUTOFF)
+                    return result;
+                
                 if(_beta <= _alpha){
                     break;
                 }
@@ -107,6 +128,9 @@ public class Search {
             while(it.hasNext()){                
                 result = recursiveDLS((Node) it.next(), new Problem(nodeState, _problem.getmaxPlayer()), _alpha, _beta, _maxDepth - 1, _startTime);
                 _beta = Math.min(_beta, result.alphabeta);
+                
+                if(result.move == MoveIndicator.CUTOFF)
+                    return result;
                 
                 if(_beta <= _alpha){
                     break;

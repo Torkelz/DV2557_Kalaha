@@ -35,11 +35,13 @@ public class AIClient implements Runnable
          Create and show Tree GUI
         */
         
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                treeView.createAndShowGUI();
-            }
-        });
+        if(treeView != null){
+            javax.swing.SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    treeView.createAndShowGUI();
+                }
+            });
+        }
 	player = -1;
         connected = false;
         
@@ -223,7 +225,7 @@ public class AIClient implements Runnable
     public int getMove(GameState currentBoard)
     {
         Problem problem = new Problem(currentBoard, player);
-        Search search = new Search();
+        Search search = new Search(text);
         
         AlphaBetaMove move = search.deepeningSearch(problem, 3);
         //int myMove = getRandom();

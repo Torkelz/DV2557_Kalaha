@@ -5,6 +5,7 @@
  */
 package ai;
 
+import static ai.TreeViewer.treeView;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -26,7 +27,10 @@ public class Node{
         this.move = _move;
         this.parent = _parent;
         children = new ArrayList<>();
-        treeNode = new DefaultMutableTreeNode(this);
+        
+        if(treeView != null){
+            treeNode = new DefaultMutableTreeNode(this);
+        }
     }
     
     public void addChild(MoveIndicator _move){
@@ -57,7 +61,9 @@ public class Node{
         for(MoveIndicator ind : MoveIndicator.values()){
             if(ind.getValue() > 0 && _problem.isValidMove(ind)){
                 children.add(new Node(this, ind));
-                TreeViewer.treeView.insertChild(treeNode, children.get(children.size() - 1).getTreeNode());
+                if(treeView != null){
+                    TreeViewer.treeView.insertChild(treeNode, children.get(children.size() - 1).getTreeNode());
+                }
             }
         }
     }

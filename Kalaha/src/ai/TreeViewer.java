@@ -109,7 +109,7 @@ public class TreeViewer  extends JPanel{
      * this method should be invoked from the
      * event dispatch thread.
      */
-    static final TreeViewer treeView = new TreeViewer();
+    static final TreeViewer treeView = null;//new TreeViewer();
     public void createAndShowGUI() {
         if (useSystemLookAndFeel) {
             try {
