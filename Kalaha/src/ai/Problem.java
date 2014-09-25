@@ -81,6 +81,9 @@ public class Problem {
             utility -= evaluateUtilityByScore(_prev, _current, otherPlayer);
         }
         
+//        int score = _current.getScore(player) - _prev.getScore(player);
+//        utility += score;
+        
         /// Evaluate win/lose conditions
         if(_current.getWinner() == player) //AI Win
             utility += 50;
@@ -97,25 +100,32 @@ public class Problem {
         
         int score = _current.getScore(_player) - _prev.getScore(_player);
         if(score > 1)
-            utility += score * 2;
+            utility += score;
         else if(_current.getNextPlayer() == _prev.getNextPlayer())
             utility += 10;
         else
             utility += 2;
         
+        
+        
+        
         int opponent = 1;
         if(_player == opponent)
             opponent = 2;
         
-        int pSeeds = 0;
-        int oSeeds = 0;
-        for(int i = 1; i <= 6; ++i){
-            pSeeds += _current.getSeeds(i, _player);
-            oSeeds += _current.getSeeds(i, opponent);
-        }
+        int oScore = _current.getScore(opponent) - _prev.getScore(opponent);
+        if(oScore > 1)
+            utility -= oScore;
         
-        if(pSeeds > oSeeds)
-            utility += 5;
+//        int pSeeds = 0;
+//        int oSeeds = 0;
+//        for(int i = 1; i <= 6; ++i){
+//            pSeeds += _current.getSeeds(i, _player);
+//            oSeeds += _current.getSeeds(i, opponent);
+//        }
+//        
+//        if(pSeeds > oSeeds)
+//            utility += 5;
               
         return utility; 
     }

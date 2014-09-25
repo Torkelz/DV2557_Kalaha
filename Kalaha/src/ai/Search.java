@@ -107,7 +107,7 @@ public class Search {
             AlphaBetaMove result = new AlphaBetaMove(MoveIndicator.FAILURE, _alpha);
             while(it.hasNext()){                
                 result = recursiveDLS((Node) it.next(), new Problem(nodeState, _problem.getmaxPlayer()), _alpha, _beta, _maxDepth - 1, _startTime);
-                _alpha = Math.max(_alpha, result.alphabeta);
+                _alpha = Math.max(_alpha, result.alphabeta + _alpha);
                 
                 if(result.move == MoveIndicator.CUTOFF)
                     return result;
@@ -127,7 +127,7 @@ public class Search {
             AlphaBetaMove result = new AlphaBetaMove(MoveIndicator.FAILURE, _beta);
             while(it.hasNext()){                
                 result = recursiveDLS((Node) it.next(), new Problem(nodeState, _problem.getmaxPlayer()), _alpha, _beta, _maxDepth - 1, _startTime);
-                _beta = Math.min(_beta, result.alphabeta);
+                _beta = Math.min(_beta, result.alphabeta + _beta);
                 
                 if(result.move == MoveIndicator.CUTOFF)
                     return result;
