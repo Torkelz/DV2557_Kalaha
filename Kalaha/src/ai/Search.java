@@ -18,7 +18,7 @@ public class Search {
      */
     static final long MAX_TIME = 5000;
     
-    private class AlphaBetaMove{
+    public class AlphaBetaMove{
         public MoveIndicator move;
         public int alphabeta;
 
@@ -28,36 +28,36 @@ public class Search {
         }
     }
     
-    public MoveIndicator deepeningSearch(Problem _problem, int _depth){
+    public AlphaBetaMove deepeningSearch(Problem _problem, int _depth){
         long startTime = System.currentTimeMillis();
         long elapsedTime = 0;
         long iterationTime = 0;
-        MoveIndicator move = MoveIndicator.FAILURE;
-        
+        AlphaBetaMove m = new AlphaBetaMove(MoveIndicator.FAILURE, -1);
+                
         for(int i = 1; elapsedTime + iterationTime < MAX_TIME; ++i){
             long start = System.currentTimeMillis();
-            MoveIndicator bestMove = depthLimitedSearch(_problem.clone(), i, startTime);
+            AlphaBetaMove bestMove = depthLimitedSearch(_problem.clone(), i, startTime);
             //_problem.resetState();
             
-            if(bestMove != MoveIndicator.CUTOFF){
-                move = bestMove;
+            if(bestMove.move != MoveIndicator.CUTOFF){
+                m = bestMove;
             }
             
             long end = System.currentTimeMillis() - start;
             iterationTime = end;
             elapsedTime += end;
         }
-        return move;
+        return m;
     }
     
-    private MoveIndicator depthLimitedSearch(Problem _problem, int _maxDepth, long _startTime){
+    private AlphaBetaMove depthLimitedSearch(Problem _problem, int _maxDepth, long _startTime){
         Node root = new Node(null, MoveIndicator.FAILURE);
         /*
         Clear Tree and reset the root.
         */
         treeView.clearTree();
         root.setTreeNode(treeView.getRoot());
-        return recursiveDLS(root, _problem, Integer.MIN_VALUE, Integer.MAX_VALUE, _maxDepth, _startTime).move;
+        return recursiveDLS(root, _problem, Integer.MIN_VALUE, Integer.MAX_VALUE, _maxDepth, _startTime);
     }
     
     private AlphaBetaMove recursiveDLS(Node _currentNode, Problem _problem, int _alpha,

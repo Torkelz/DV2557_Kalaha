@@ -1,5 +1,6 @@
 package ai;
 
+import ai.Search.AlphaBetaMove;
 import static ai.TreeViewer.treeView;
 import java.io.*;
 import java.net.*;
@@ -224,15 +225,12 @@ public class AIClient implements Runnable
         Problem problem = new Problem(currentBoard, player);
         Search search = new Search();
         
-        MoveIndicator move = search.deepeningSearch(problem, 3);
-        int myMove = getRandom();
-
-        if(move.getValue() > 0){
-            myMove = move.getValue();
-            addText("Made special move " + myMove);
-        }       
+        AlphaBetaMove move = search.deepeningSearch(problem, 3);
+        //int myMove = getRandom();
         
-        return myMove;
+        addText("Value of Move: " + move.alphabeta);
+            
+        return move.move.getValue();
     }
     
     /**
