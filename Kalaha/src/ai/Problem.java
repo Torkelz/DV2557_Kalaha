@@ -71,39 +71,40 @@ public class Problem {
     }
     
     public int evaluate(GameState _prev, GameState _current){
-        int value = 0;
-        
-        /*int seeds = 0;
-        for(int player = 1; player <= 2; ++player){
-            for(int ambo = 1; ambo <=6; ++ambo){
-                if(seeds <)
-            }
-        }*/
-        
+        int utility = 0;
+
+        /// Evaluate score utility of scoring
         if(_prev.getNextPlayer() == player){
             int score = _current.getScore(player) - _prev.getScore(player);
             if(score > 1)
-                value += score;
+                utility += score;
+            else if(_current.getNextPlayer() == _prev.getNextPlayer())
+                utility +=5;
+            else
+                utility += 2;
         }
         else{
             int score = _current.getScore(otherPlayer) - _prev.getScore(otherPlayer);
             if(score > 1)
-                value -= score;
+                utility -= score;
+            else if(_current.getNextPlayer() == _prev.getNextPlayer())
+                utility -=5;
+            else
+                utility -= 1;
         }
         
         
-        
-        
+        /// Evaluate win/lose conditions
         if(_current.getWinner() == player) //AI Win
-            value += 50;
+            utility += 50;
         else if(_current.getWinner() == 0) //Draw
-            value +=10;
+            utility +=10;
         else if(_current.getWinner() == otherPlayer) //AI Lose
-            value -= 50;
+            utility -= 50;
         else{
             
         }
 
-        return value;
+        return utility;
     }
 }
