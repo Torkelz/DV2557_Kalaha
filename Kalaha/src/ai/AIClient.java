@@ -72,7 +72,7 @@ public class AIClient implements Runnable
     private void initGUI()
     {
         //Client GUI stuff. You don't need to change this.
-        JFrame frame = new JFrame("My AI Client");
+        JFrame frame = new JFrame("Mr.T & Mr.S");
         frame.setLocation(Global.getClientXpos(), 445);
         frame.setSize(new Dimension(420,250));
         frame.getContentPane().setLayout(new FlowLayout());
