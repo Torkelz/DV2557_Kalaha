@@ -48,13 +48,13 @@ public class Problem {
         currentState = initState.clone();
     }
     
-    public boolean goalTest(MoveIndicator _move){
-        if(_move.getValue() > 0 && currentState.moveIsPossible(_move.getValue())){
-            currentState.makeMove(_move.getValue());
-            return currentState.getWinner() >= 0;
-        }
-        return false;
-    }
+//    public boolean goalTest(MoveIndicator _move){
+//        if(_move.getValue() > 0 && currentState.moveIsPossible(_move.getValue())){
+//            currentState.makeMove(_move.getValue());
+//            return currentState.getWinner() >= 0;
+//        }
+//        return false;
+//    }
     
     public boolean isValidMove(MoveIndicator _move){
         return currentState.moveIsPossible(_move.getValue());
@@ -73,34 +73,31 @@ public class Problem {
     }
     
     public int evaluate(GameState _prev, GameState _current){
-        int utility = 0;
+        int utility = 2;
 
         /// Evaluate utility based on scoring
         if(_prev.getNextPlayer() == player){
             utility += evaluateUtilityByScore(_prev, _current, player);
         }
         else{
-            utility -= evaluateUtilityByScore(_prev, _current, otherPlayer);
+            utility -= evaluateUtilityByScore(_prev, _current, otherPlayer) * 0.75;
         }
-        
-//        int score = _current.getScore(player) - _prev.getScore(player);
-//        utility += score;
         
         /// Evaluate win/lose conditions
         if(_current.getWinner() == player) //AI Win
-            utility += 50;
+            utility += 256;
         else if(_current.getWinner() == 0) //Draw
-            utility +=2;
+            utility +=16;
         else if(_current.getWinner() == otherPlayer) //AI Lose
-            utility -= 50;
+            utility -= 256;
     
         return utility;
     }
     
-    public List<MoveIndicator> populate(){
+    public List<MoveIndicator> populate(GameState _curr){
         List<MoveIndicator> list = new ArrayList<>();
         for(MoveIndicator ind : MoveIndicator.values()){
-            if(ind.getValue() > 0 && isValidMove(ind)){
+            if(ind.getValue() > 0 && _curr.moveIsPossible(ind.getValue())){
                 list.add(ind);
             }
         }
@@ -118,27 +115,44 @@ public class Problem {
         else
             utility += 2;
         
+//        int opponent = 1;
+//        if(_player == opponent)
+//            opponent = 2;
         
         
         
-        int opponent = 1;
-        if(_player == opponent)
-            opponent = 2;
         
-        int oScore = _current.getScore(opponent) - _prev.getScore(opponent);
-        if(oScore > 1)
-            utility -= oScore;
         
-//        int pSeeds = 0;
-//        int oSeeds = 0;
-//        for(int i = 1; i <= 6; ++i){
-//            pSeeds += _current.getSeeds(i, _player);
-//            oSeeds += _current.getSeeds(i, opponent);
-//        }
+        
+        
+        
+        
+        
+//        if(_player == player){
 //        
-//        if(pSeeds > oSeeds)
-//            utility += 5;
-              
+//            int move = -1;
+//            for(int i = 1; i <= 6; ++i){
+//                if(_prev.getSeeds(i, _player) > 0 && _current.getSeeds(i, _player) == 0 ){
+//                    move = i;
+//                    break;
+//                }                
+//            }
+//            if(move > 0){
+//                int oMove = _prev.getOppositeAmbo(move);
+//                if(oMove > 7)
+//                    oMove -= 7;
+//
+//                if (_prev.getSeeds(oMove, opponent) == 0){
+//                    int val = _prev.getSeeds(move, _player);
+//                    utility += 512;//Math.pow(2, val * 0.5);;
+//                }
+//            }
+//        }
+        
+//        int oScore = _current.getScore(opponent) - _prev.getScore(opponent);
+//        if(oScore > 1)
+//            utility -= Math.pow(2, oScore * 0.5);
+            
         return utility; 
     }
 }

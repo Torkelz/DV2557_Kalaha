@@ -72,7 +72,21 @@ public class Search {
     }
     
     private AlphaBetaMove depthLimitedSearch(Problem _problem, int _maxDepth, long _startTime){
-        return recursiveDLS(MoveIndicator.FAILURE, _problem, Integer.MIN_VALUE, Integer.MAX_VALUE, _maxDepth, _startTime);
+        AlphaBetaMove result = new AlphaBetaMove(MoveIndicator.FAILURE, false, Integer.MIN_VALUE);
+        List<MoveIndicator> moves = _problem.populate(_problem.getInitialGS());
+            
+        Iterator<MoveIndicator> it = moves.iterator();
+        while(it.hasNext()){
+            AlphaBetaMove value = recursiveDLS((MoveIndicator) it.next(), _problem.clone(),
+                    Integer.MIN_VALUE, Integer.MAX_VALUE, _maxDepth - 1, _startTime);
+            
+            if(value.alphabeta > result.alphabeta){
+                result = value;
+            }
+            if(result.terminal)
+                return result;
+        }
+        return result;
     }
     
     private AlphaBetaMove recursiveDLS(MoveIndicator _currentMove, Problem _problem, int _alpha,
@@ -83,8 +97,8 @@ public class Search {
         }
         
         GameState nodeState = _problem.getInitialGS();
-        if(_currentMove.getValue() > 0)
-            nodeState.makeMove(_currentMove.getValue());
+        //if(_currentMove.getValue() > 0)
+        nodeState.makeMove(_currentMove.getValue());
       
         int currentNodeEval = _problem.evaluate(_problem.getCurrentGS(), nodeState);
         if(_maxDepth == 0 ){
@@ -94,51 +108,56 @@ public class Search {
             return new AlphaBetaMove(_currentMove, true, currentNodeEval);
         }
         
-        List<MoveIndicator> moves = _problem.populate();
+        List<MoveIndicator> moves = _problem.populate(nodeState);
             
         Iterator<MoveIndicator> it = moves.iterator();
         if(_problem.isMax()){
             AlphaBetaMove result = new AlphaBetaMove(MoveIndicator.FAILURE, false, _alpha);
-            while(it.hasNext()){                
+            
+            int value = Integer.MIN_VALUE;
+            while(it.hasNext()){
+                //MoveIndicator m = (MoveIndicator) it.next();
                 result = recursiveDLS((MoveIndicator) it.next(), new Problem(nodeState,
                     _problem.getmaxPlayer()), _alpha, _beta, _maxDepth - 1, _startTime);
-                
-                _alpha = Math.max(_alpha, result.alphabeta);
+                value = result.alphabeta;
                 
                 if(result.move == MoveIndicator.CUTOFF || result.move == MoveIndicator.TIMESUP)
                     return result;
                 
-                if(_beta <= _alpha){
+                if(value >= _beta)
                     break;
-                }
+                
+                _alpha = Math.max(_alpha, value);
             }
             if(_currentMove.getValue() > 0){
-                return new AlphaBetaMove(_currentMove, result.terminal, _alpha + currentNodeEval);
+                return new AlphaBetaMove(_currentMove, result.terminal, value);
             }
             else{
-                return new AlphaBetaMove(result.move, result.terminal, _alpha + currentNodeEval);
+                return new AlphaBetaMove(result.move, result.terminal, value);
             }
         }
         else{
             AlphaBetaMove result = new AlphaBetaMove(MoveIndicator.FAILURE, false, _beta);
+            
+            int value = Integer.MAX_VALUE;
             while(it.hasNext()){                
                 result = recursiveDLS((MoveIndicator) it.next(), new Problem(nodeState,
                     _problem.getmaxPlayer()), _alpha, _beta, _maxDepth - 1, _startTime);
-                
-                _beta = Math.min(_beta, result.alphabeta);
+                value = result.alphabeta;
                 
                 if(result.move == MoveIndicator.CUTOFF || result.move == MoveIndicator.TIMESUP)
                     return result;
                 
-                if(_beta <= _alpha){
+                if(value <= _alpha){
                     break;
                 }
+                _beta = Math.min(_beta, value);
             }
             if(_currentMove.getValue() > 0){
-                return new AlphaBetaMove(_currentMove, result.terminal, _beta + currentNodeEval);
+                return new AlphaBetaMove(_currentMove, result.terminal, value);
             }
             else{
-                return new AlphaBetaMove(result.move, result.terminal, _beta + currentNodeEval);
+                return new AlphaBetaMove(result.move, result.terminal, value);
             }
         }
     }
