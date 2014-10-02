@@ -107,13 +107,14 @@ public class Problem {
     private int evaluateUtilityByScore(GameState _prev, GameState _current, int _player){
         int utility = 0;
         
-        int score = _current.getScore(_player) - _prev.getScore(_player);
-        if(score > 1)
-            utility += score;
-        else if(_current.getNextPlayer() == _prev.getNextPlayer())
-            utility += 10;
-        else
-            utility += 2;
+        int score = _current.getScore(_player);// - _prev.getScore(_player);
+        utility += score;
+//        if(score > 1)
+//            utility += score;
+//        else if(_current.getNextPlayer() == _prev.getNextPlayer())
+//            utility += 10;
+//        else
+//            utility += 2;
         
 //        int opponent = 1;
 //        if(_player == opponent)
