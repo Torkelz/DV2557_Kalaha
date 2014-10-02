@@ -227,7 +227,7 @@ public class AIClient implements Runnable
         Problem problem = new Problem(currentBoard, player);
         Search search = new Search(text);
         
-        AlphaBetaMove move = search.deepeningSearch(problem, 3);
+        AlphaBetaMove move = search.deepeningSearch(problem);
         //int myMove = getRandom();
         
         addText("Value of Move: " + move.alphabeta);

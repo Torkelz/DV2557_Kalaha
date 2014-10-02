@@ -41,8 +41,7 @@ public class Search {
         }
     }
     
-    public AlphaBetaMove deepeningSearch(Problem _problem, int _depth){
-        long startTime = System.currentTimeMillis();
+    public AlphaBetaMove deepeningSearch(Problem _problem){
         long elapsedTime = 0;
         long iterationTime = 0;
         AlphaBetaMove m = new AlphaBetaMove(MoveIndicator.FAILURE, -1);
