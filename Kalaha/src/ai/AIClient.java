@@ -1,7 +1,6 @@
 package ai;
 
 import ai.Search.AlphaBetaMove;
-import static ai.TreeViewer.treeView;
 import java.io.*;
 import java.net.*;
 import javax.swing.*;
@@ -31,17 +30,6 @@ public class AIClient implements Runnable
      */
     public AIClient()
     {
-        /*
-         Create and show Tree GUI
-        */
-        
-        if(treeView != null){
-            javax.swing.SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    treeView.createAndShowGUI();
-                }
-            });
-        }
 	player = -1;
         connected = false;
         

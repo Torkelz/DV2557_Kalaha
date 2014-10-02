@@ -5,6 +5,8 @@
  */
 package ai;
 
+import java.util.ArrayList;
+import java.util.List;
 import kalaha.GameState;
 
 /**
@@ -93,6 +95,16 @@ public class Problem {
             utility -= 50;
     
         return utility;
+    }
+    
+    public List<MoveIndicator> populate(){
+        List<MoveIndicator> list = new ArrayList<>();
+        for(MoveIndicator ind : MoveIndicator.values()){
+            if(ind.getValue() > 0 && isValidMove(ind)){
+                list.add(ind);
+            }
+        }
+        return list;
     }
     
     private int evaluateUtilityByScore(GameState _prev, GameState _current, int _player){
