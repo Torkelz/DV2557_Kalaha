@@ -34,9 +34,11 @@ public class Search {
     public class AlphaBetaMove{
         public MoveIndicator move;
         public int alphabeta;
+        public boolean terminal;
 
-        public AlphaBetaMove(MoveIndicator _move, int _alphabeta) {
+        public AlphaBetaMove(MoveIndicator _move, boolean _terminal, int _alphabeta) {
             this.move = _move;
+            this.terminal = _terminal;
             this.alphabeta = _alphabeta;
         }
     }
@@ -44,19 +46,25 @@ public class Search {
     public AlphaBetaMove deepeningSearch(Problem _problem){
         long elapsedTime = 0;
         long iterationTime = 0;
-        AlphaBetaMove m = new AlphaBetaMove(MoveIndicator.FAILURE, -1);
+        AlphaBetaMove m = new AlphaBetaMove(MoveIndicator.FAILURE, false, -1);
+
+        long startTime = System.currentTimeMillis();
+
         int i;
-        for(i = 1; elapsedTime + iterationTime < MAX_TIME; ++i){
+        for(i = 1; System.currentTimeMillis() - startTime < MAX_TIME; ++i){
             long start = System.currentTimeMillis();
+            
             AlphaBetaMove bestMove = depthLimitedSearch(_problem.clone(), i, startTime);
-            //_problem.resetState();
-            if(bestMove.move != MoveIndicator.CUTOFF){
+            
+            if(bestMove.move == MoveIndicator.TIMESUP || bestMove.terminal)
+                break;
+            
+            if(bestMove.move.getValue() > 0){
                 m = bestMove;
             }
-            
-            long end = System.currentTimeMillis() - start;
-            iterationTime = end;
-            elapsedTime += end;
+
+            iterationTime = System.currentTimeMillis() - start;
+            elapsedTime += iterationTime;
         }
         addText("Depth: " + i);
 
@@ -77,6 +85,12 @@ public class Search {
     
     private AlphaBetaMove recursiveDLS(Node _currentNode, Problem _problem, int _alpha,
             int _beta, int _maxDepth, long _startTime){
+        
+        if((System.currentTimeMillis() - _startTime) >= MAX_TIME){
+            return new AlphaBetaMove(MoveIndicator.TIMESUP, false, 0);
+        }
+        
+        
         GameState nodeState = _problem.getInitialGS();
         if(_currentNode.getMove().getValue() > 0)
             nodeState.makeMove(_currentNode.getMove().getValue());
@@ -87,13 +101,15 @@ public class Search {
             treeView.expandCurrentNode(_currentNode.getTreeNode());
         }
         
-        if((System.currentTimeMillis() - _startTime) >= MAX_TIME){
-            return new AlphaBetaMove(MoveIndicator.CUTOFF, _problem.evaluate(_problem.getCurrentGS(), nodeState));
+        
+        int currentNodeEval = _problem.evaluate(_problem.getCurrentGS(), nodeState);
+        if(_maxDepth == 0 ){
+            return new AlphaBetaMove(_currentNode.getMove(), false, currentNodeEval);
+        }
+        if(nodeState.getWinner() > 0){
+            return new AlphaBetaMove(_currentNode.getMove(), true, currentNodeEval);
         }
         
-        if(_maxDepth == 0 || nodeState.getWinner() > 0){
-            return new AlphaBetaMove(_currentNode.getMove(), _problem.evaluate(_problem.getCurrentGS(), nodeState));
-        }
         
         //_problem.updateCurrentGS(nodeState);
         
@@ -103,12 +119,15 @@ public class Search {
             
         Iterator<Node> it = _currentNode.getChildIterator();
         if(_problem.isMax()){
-            AlphaBetaMove result = new AlphaBetaMove(MoveIndicator.FAILURE, _alpha);
+            AlphaBetaMove result = new AlphaBetaMove(MoveIndicator.FAILURE, false, _alpha);
             while(it.hasNext()){                
                 result = recursiveDLS((Node) it.next(), new Problem(nodeState, _problem.getmaxPlayer()), _alpha, _beta, _maxDepth - 1, _startTime);
-                _alpha = Math.max(_alpha, result.alphabeta + _alpha);
                 
-                if(result.move == MoveIndicator.CUTOFF)
+                
+                _alpha = Math.max(_alpha, result.alphabeta);
+                
+                
+                if(result.move == MoveIndicator.CUTOFF || result.move == MoveIndicator.TIMESUP)
                     return result;
                 
                 if(_beta <= _alpha){
@@ -116,19 +135,20 @@ public class Search {
                 }
             }
             if(_currentNode.getMove().getValue() > 0){
-                return new AlphaBetaMove(_currentNode.getMove(), _alpha);
+                return new AlphaBetaMove(_currentNode.getMove(), result.terminal, _alpha + currentNodeEval);
             }
             else{
-                return new AlphaBetaMove(result.move, _alpha);
+                return new AlphaBetaMove(result.move, result.terminal, _alpha + currentNodeEval);
             }
         }
         else{
-            AlphaBetaMove result = new AlphaBetaMove(MoveIndicator.FAILURE, _beta);
+            AlphaBetaMove result = new AlphaBetaMove(MoveIndicator.FAILURE, false, _beta);
             while(it.hasNext()){                
                 result = recursiveDLS((Node) it.next(), new Problem(nodeState, _problem.getmaxPlayer()), _alpha, _beta, _maxDepth - 1, _startTime);
-                _beta = Math.min(_beta, result.alphabeta + _beta);
                 
-                if(result.move == MoveIndicator.CUTOFF)
+                _beta = Math.min(_beta, result.alphabeta);
+                
+                if(result.move == MoveIndicator.CUTOFF || result.move == MoveIndicator.TIMESUP)
                     return result;
                 
                 if(_beta <= _alpha){
@@ -136,10 +156,10 @@ public class Search {
                 }
             }
             if(_currentNode.getMove().getValue() > 0){
-                return new AlphaBetaMove(_currentNode.getMove(), _beta);
+                return new AlphaBetaMove(_currentNode.getMove(), result.terminal, _beta + currentNodeEval);
             }
             else{
-                return new AlphaBetaMove(result.move, _beta);
+                return new AlphaBetaMove(result.move, result.terminal, _beta + currentNodeEval);
             }
         }
     }

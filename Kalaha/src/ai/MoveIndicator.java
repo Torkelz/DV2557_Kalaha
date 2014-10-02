@@ -17,7 +17,8 @@ public enum MoveIndicator {
     FIVE(5),
     SIX(6),
     CUTOFF(0),
-    FAILURE(-1);
+    FAILURE(-1),
+    TIMESUP(-2);
     private int value;
     private MoveIndicator(int _value){
         this.value = _value;
