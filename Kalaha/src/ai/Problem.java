@@ -60,8 +60,8 @@ public class Problem {
         return currentState.moveIsPossible(_move.getValue());
     }
     
-    public boolean isMax(){
-        return player == currentState.getNextPlayer();
+    public boolean isMax(GameState _gs){
+        return player == _gs.getNextPlayer();
     }
     
     public GameState cloneGSProblem(){
@@ -107,14 +107,15 @@ public class Problem {
     private int evaluateUtilityByScore(GameState _prev, GameState _current, int _player){
         int utility = 0;
         
-        int score = _current.getScore(_player) - _prev.getScore(_player);
+        int score = _current.getScore(_player);// - _prev.getScore(_player);
         if(score > 1)
             utility += score;
         else if(_current.getNextPlayer() == _prev.getNextPlayer())
             utility += 10;
         else
             utility += 2;
-        
+        if(_current.getNextPlayer() == _prev.getNextPlayer())
+            utility += 10;
 
         
         
