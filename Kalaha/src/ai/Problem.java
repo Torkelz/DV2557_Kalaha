@@ -118,12 +118,13 @@ public class Problem {
         int score = _current.getScore(_player);// - _prev.getScore(_player);
         if(score > 1)
             utility += score;
-        else if(_current.getNextPlayer() == _prev.getNextPlayer())
-            utility += 10;
+//        else if(_current.getNextPlayer() == _prev.getNextPlayer())
+//            utility += 10;
         else
             utility += 2;
+        
         if(_current.getNextPlayer() == _prev.getNextPlayer())
-            utility += 10;
+            utility += 4;
 
         utility -= oScore;
         
@@ -151,7 +152,7 @@ public class Problem {
 
                 if (_prev.getSeeds(oMove, opponent) == 0){
                     int val = _prev.getSeeds(move, _player);
-                    utility += 16;//Math.pow(2, val * 0.5);;
+                    utility += val;//Math.pow(2, val * 0.5);;
                 }
             }
 //        }
