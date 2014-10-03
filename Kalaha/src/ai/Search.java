@@ -24,8 +24,7 @@ public class Search {
         text = _text;
     }
     
-    public void addText(String txt)
-    {
+    public void addText(String txt){
         //Don't change this
         text.append(txt + "\n");
         text.setCaretPosition(text.getDocument().getLength());
@@ -36,7 +35,7 @@ public class Search {
         public int alphabeta;
         public boolean terminal;
 
-        public AlphaBetaMove(MoveIndicator _move, boolean _terminal, int _alphabeta) {
+        public AlphaBetaMove(MoveIndicator _move, boolean _terminal, int _alphabeta){
             this.move = _move;
             this.terminal = _terminal;
             this.alphabeta = _alphabeta;
@@ -52,14 +51,16 @@ public class Search {
         for(i = 1; System.currentTimeMillis() - startTime < MAX_TIME; ++i){
             AlphaBetaMove bestMove = depthLimitedSearch(_problem, i, startTime);
             
-            if(bestMove.move == MoveIndicator.TIMESUP)
+            if(bestMove.move == MoveIndicator.TIMESUP){
                 break;
+            }
             
             if(bestMove.move.getValue() > 0){
                 m = bestMove;
             }
-            if(bestMove.terminal)
+            if(bestMove.terminal){
                 break;
+            }
         }
         addText("Depth: " + i);
 
@@ -78,16 +79,16 @@ public class Search {
             if(value.alphabeta > result.alphabeta){
                 result = value;
             }
-            if(result.terminal)
+            if(result.terminal){
                 return result;
+            }
         }
         return result;
     }
     
     private AlphaBetaMove recursiveDLS(MoveIndicator _currentMove, Problem _problem, int _alpha,
             int _beta, int _maxDepth, long _startTime){
-        
-                if((System.currentTimeMillis() - _startTime) >= MAX_TIME){
+        if((System.currentTimeMillis() - _startTime) >= MAX_TIME){
             return new AlphaBetaMove(MoveIndicator.TIMESUP, false, 0);
         }
         
@@ -104,7 +105,6 @@ public class Search {
         } 
         
         List<MoveIndicator> moves = _problem.populate(nodeState);
-            
         Iterator<MoveIndicator> it = moves.iterator();
         if(_problem.isMax(nodeState)){
             AlphaBetaMove result = new AlphaBetaMove(MoveIndicator.FAILURE, false, Integer.MIN_VALUE);
@@ -114,13 +114,15 @@ public class Search {
                 result = recursiveDLS((MoveIndicator) it.next(), new Problem(nodeState,
                     _problem.getmaxPlayer()), _alpha, _beta, _maxDepth - 1, _startTime);
 
-                //IF abort mission do it directly
-                if(result.move == MoveIndicator.CUTOFF || result.move == MoveIndicator.TIMESUP)
+                /// IF abort mission do it directly
+                if(result.move == MoveIndicator.CUTOFF  || result.move == MoveIndicator.TIMESUP){
                     return result;
+                }
 
                 value = Math.max(value, result.alphabeta);
-                if(value >= _beta)
+                if(value >= _beta){
                     break;
+                }
 
                 _alpha = Math.max(_alpha, value);
             }
@@ -134,100 +136,19 @@ public class Search {
                 result = recursiveDLS((MoveIndicator) it.next(), new Problem(nodeState,
                     _problem.getmaxPlayer()), _alpha, _beta, _maxDepth - 1, _startTime);
 
-                //IF abort mission do it directly
-                if(result.move == MoveIndicator.CUTOFF || result.move == MoveIndicator.TIMESUP)
+                /// IF abort mission do it directly
+                if(result.move == MoveIndicator.CUTOFF || result.move == MoveIndicator.TIMESUP){
                     return result;
+                }
 
                 value = Math.min(value, result.alphabeta);
-                if(value <= _alpha)
+                if(value <= _alpha){
                     break;
+                }
 
                 _beta = Math.min(_beta, value);
             }
             return new AlphaBetaMove(_currentMove, result.terminal, value);
         }
     }
-  
-    //Back-up: Alternative solution.
-    /*private AlphaBetaMove maxValue(MoveIndicator _currentMove, Problem _problem, int _alpha,
-            int _beta, int _maxDepth, long _startTime){
-        
-        if((System.currentTimeMillis() - _startTime) >= MAX_TIME){
-            return new AlphaBetaMove(MoveIndicator.TIMESUP, false, 0);
-        }
-        
-        GameState nodeState = _problem.getInitialGS();
-        nodeState.makeMove(_currentMove.getValue());
-      
-        if(nodeState.getWinner() > 0){
-            return new AlphaBetaMove(_currentMove, true, 
-                    _problem.evaluate(_problem.getCurrentGS(), nodeState));
-        }
-        if(_maxDepth == 0 ){
-            return new AlphaBetaMove(_currentMove, false, 
-                    _problem.evaluate(_problem.getCurrentGS(), nodeState));
-        }        
-        
-        List<MoveIndicator> moves = _problem.populate(nodeState);            
-        Iterator<MoveIndicator> it = moves.iterator();
-        AlphaBetaMove result = new AlphaBetaMove(MoveIndicator.FAILURE, false, Integer.MIN_VALUE);
-            
-        int value = Integer.MIN_VALUE;
-        while(it.hasNext()){
-            result = minValue((MoveIndicator) it.next(), new Problem(nodeState,
-                _problem.getmaxPlayer()), _alpha, _beta, _maxDepth - 1, _startTime);
-            
-            //IF abort mission do it directly
-            if(result.move == MoveIndicator.CUTOFF || result.move == MoveIndicator.TIMESUP)
-                return result;
-            
-            value = Math.max(value, result.alphabeta);
-            if(value >= _beta)
-                break;
-
-            _alpha = Math.max(_alpha, value);
-        }
-        return new AlphaBetaMove(_currentMove, result.terminal, value);
-    }
-    
-    private AlphaBetaMove minValue(MoveIndicator _currentMove, Problem _problem, int _alpha,
-            int _beta, int _maxDepth, long _startTime){
-        
-        if((System.currentTimeMillis() - _startTime) >= MAX_TIME){
-            return new AlphaBetaMove(MoveIndicator.TIMESUP, false, 0);
-        }
-        
-        GameState nodeState = _problem.getInitialGS();
-        nodeState.makeMove(_currentMove.getValue());
-      
-        if(nodeState.getWinner() > 0){
-            return new AlphaBetaMove(_currentMove, true, 
-                    _problem.evaluate(_problem.getCurrentGS(), nodeState));
-        }
-        if(_maxDepth == 0 ){
-            return new AlphaBetaMove(_currentMove, false, 
-                    _problem.evaluate(_problem.getCurrentGS(), nodeState));
-        }        
-        
-        List<MoveIndicator> moves = _problem.populate(nodeState);            
-        Iterator<MoveIndicator> it = moves.iterator();
-        AlphaBetaMove result = new AlphaBetaMove(MoveIndicator.FAILURE, false, Integer.MAX_VALUE);
-            
-        int value = Integer.MAX_VALUE;
-        while(it.hasNext()){
-            result = maxValue((MoveIndicator) it.next(), new Problem(nodeState,
-                _problem.getmaxPlayer()), _alpha, _beta, _maxDepth - 1, _startTime);
-            
-            //IF abort mission do it directly
-            if(result.move == MoveIndicator.CUTOFF || result.move == MoveIndicator.TIMESUP)
-                return result;
-            
-            value = Math.min(value, result.alphabeta);
-            if(value <= _alpha)
-                break;
-
-            _beta = Math.min(_beta, value);
-        }
-        return new AlphaBetaMove(_currentMove, result.terminal, value);
-    }//*/
 }

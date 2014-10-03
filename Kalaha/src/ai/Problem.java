@@ -16,8 +16,8 @@ import kalaha.GameState;
 public class Problem {
     private GameState initState;    
     private GameState currentState;
-    private int player;
-    private int otherPlayer;
+    private int ai;
+    private int opponent;
     
     public GameState getCurrentGS(){
         return currentState;
@@ -27,41 +27,33 @@ public class Problem {
     }
     
     public int getmaxPlayer(){
-        return player;
+        return ai;
     }
     
     public Problem(GameState _initialState, int _player){
         this.currentState = _initialState.clone();
         this.initState = _initialState.clone();
-        this.player = _player;
-        this.otherPlayer = 1;
-        if(this.player == 1)
-            this.otherPlayer = 2;
-
+        this.ai = _player;
+        this.opponent = 1;
+        if(this.ai == 1){
+            this.opponent = 2;
+        }
     }
     
     public Problem clone(){
-        return new Problem(initState, player);
+        return new Problem(initState, ai);
     }
     
     public void resetState(){
         currentState = initState.clone();
     }
     
-//    public boolean goalTest(MoveIndicator _move){
-//        if(_move.getValue() > 0 && currentState.moveIsPossible(_move.getValue())){
-//            currentState.makeMove(_move.getValue());
-//            return currentState.getWinner() >= 0;
-//        }
-//        return false;
-//    }
-    
     public boolean isValidMove(MoveIndicator _move){
         return currentState.moveIsPossible(_move.getValue());
     }
     
     public boolean isMax(GameState _gs){
-        return player == _gs.getNextPlayer();
+        return ai == _gs.getNextPlayer();
     }
     
     public GameState cloneGSProblem(){
@@ -76,21 +68,23 @@ public class Problem {
         int utility = 2;
 
         /// Evaluate utility based on scoring
-        if(_prev.getNextPlayer() == player){
-            utility += evaluateUtilityByScore(_prev, _current, player);
+        if(_prev.getNextPlayer() == ai){
+            utility += evaluateUtilityByScore(_prev, _current, ai);
         }
         else{
-            utility -= evaluateUtilityByScore(_prev, _current, otherPlayer) * 0.75;
+            utility -= evaluateUtilityByScore(_prev, _current, opponent) * 0.75;
         }
         
         /// Evaluate win/lose conditions
-        if(_current.getWinner() == player) //AI Win
+        if(_current.getWinner() == ai){ //AI Win
             utility += 256;
-        else if(_current.getWinner() == 0) //Draw
+        }
+        else if(_current.getWinner() == 0){ //Draw
             utility +=16;
-        else if(_current.getWinner() == otherPlayer) //AI Lose
+        }
+        else if(_current.getWinner() == opponent){ //AI Lose
             utility -= 256;
-    
+        }
         return utility;
     }
     
@@ -107,60 +101,46 @@ public class Problem {
     private int evaluateUtilityByScore(GameState _prev, GameState _current, int _player){
         int utility = 0;
         
-        int opponent = 1;
-        if(_player == opponent)
-            opponent = 2;
-        
-        
-        
-        int oScore = _current.getScore(opponent);
-        
-        int score = _current.getScore(_player);// - _prev.getScore(_player);
-        if(score > 1)
+        /// Check to find the opponent
+        int tOpponent = 1;
+        if(_player == tOpponent){
+            tOpponent = 2;
+        }
+        /// Try not to give opponent score
+        utility -= _current.getScore(tOpponent);
+
+        /// Utility based on score
+        int score = _current.getScore(_player);
+        if(score > 1){
             utility += score;
-//        else if(_current.getNextPlayer() == _prev.getNextPlayer())
-//            utility += 10;
-        else
+        }
+        else{
             utility += 2;
-        
-        if(_current.getNextPlayer() == _prev.getNextPlayer())
+        }
+
+        /// Check for extra move
+        if(_current.getNextPlayer() == _prev.getNextPlayer()){
             utility += 4;
-
-        utility -= oScore;
-        
-        
-        
-        
-        
-        
-        
-        
-        
-//        if(_player == player){
-//        
-            int move = -1;
-            for(int i = 1; i <= 6; ++i){
-                if(_prev.getSeeds(i, _player) > 0 && _current.getSeeds(i, _player) == 0 ){
-                    move = i;
-                    break;
-                }                
+        }
+    
+        /// Try to figure out a move to prevent the opponent from stealing score
+        int move = -1;
+        for(int i = 1; i <= 6; ++i){
+            if(_prev.getSeeds(i, _player) > 0 && _current.getSeeds(i, _player) == 0 ){
+                move = i;
+                break;
+            }                
+        }
+        if(move > 0){
+            int oMove = _prev.getOppositeAmbo(move);
+            if(oMove > 7){
+                oMove -= 7;
             }
-            if(move > 0){
-                int oMove = _prev.getOppositeAmbo(move);
-                if(oMove > 7)
-                    oMove -= 7;
-
-                if (_prev.getSeeds(oMove, opponent) == 0){
-                    int val = _prev.getSeeds(move, _player);
-                    utility += val;//Math.pow(2, val * 0.5);;
-                }
+            if (_prev.getSeeds(oMove, tOpponent) == 0){
+                int val = _prev.getSeeds(move, _player);
+                utility += val;//Math.pow(2, val * 0.5);;
             }
-//        }
-        
-//        int oScore = _current.getScore(opponent) - _prev.getScore(opponent);
-//        if(oScore > 1)
-//            utility -= Math.pow(2, oScore * 0.5);
-            
+        }
         return utility; 
     }
 }
