@@ -44,14 +44,13 @@ public class Search {
     }
     
     public AlphaBetaMove deepeningSearch(Problem _problem){
-        long iterationTime = 0;
         AlphaBetaMove m = new AlphaBetaMove(MoveIndicator.FAILURE, false, -1);
 
         long startTime = System.currentTimeMillis();
 
         int i;
         for(i = 1; System.currentTimeMillis() - startTime < MAX_TIME; ++i){
-            AlphaBetaMove bestMove = depthLimitedSearch(_problem.clone(), i, startTime);
+            AlphaBetaMove bestMove = depthLimitedSearch(_problem, i, startTime);
             
             if(bestMove.move == MoveIndicator.TIMESUP)
                 break;
