@@ -107,6 +107,14 @@ public class Problem {
     private int evaluateUtilityByScore(GameState _prev, GameState _current, int _player){
         int utility = 0;
         
+        int opponent = 1;
+        if(_player == opponent)
+            opponent = 2;
+        
+        
+        
+        int oScore = _current.getScore(opponent);
+        
         int score = _current.getScore(_player);// - _prev.getScore(_player);
         if(score > 1)
             utility += score;
@@ -117,7 +125,7 @@ public class Problem {
         if(_current.getNextPlayer() == _prev.getNextPlayer())
             utility += 10;
 
-        
+        utility -= oScore;
         
         
         
@@ -129,23 +137,23 @@ public class Problem {
         
 //        if(_player == player){
 //        
-//            int move = -1;
-//            for(int i = 1; i <= 6; ++i){
-//                if(_prev.getSeeds(i, _player) > 0 && _current.getSeeds(i, _player) == 0 ){
-//                    move = i;
-//                    break;
-//                }                
-//            }
-//            if(move > 0){
-//                int oMove = _prev.getOppositeAmbo(move);
-//                if(oMove > 7)
-//                    oMove -= 7;
-//
-//                if (_prev.getSeeds(oMove, opponent) == 0){
-//                    int val = _prev.getSeeds(move, _player);
-//                    utility += 512;//Math.pow(2, val * 0.5);;
-//                }
-//            }
+            int move = -1;
+            for(int i = 1; i <= 6; ++i){
+                if(_prev.getSeeds(i, _player) > 0 && _current.getSeeds(i, _player) == 0 ){
+                    move = i;
+                    break;
+                }                
+            }
+            if(move > 0){
+                int oMove = _prev.getOppositeAmbo(move);
+                if(oMove > 7)
+                    oMove -= 7;
+
+                if (_prev.getSeeds(oMove, opponent) == 0){
+                    int val = _prev.getSeeds(move, _player);
+                    utility += 16;//Math.pow(2, val * 0.5);;
+                }
+            }
 //        }
         
 //        int oScore = _current.getScore(opponent) - _prev.getScore(opponent);
